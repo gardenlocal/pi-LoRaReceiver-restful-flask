@@ -20,3 +20,8 @@ $ sudo pip3 install adafruit-circuitpython-ssd1306
 $ sudo pip3 install adafruit-circuitpython-framebuf
 $ sudo pip3 install adafruit-circuitpython-rfm9x
 ```
+
+## Running
+```
+$ python3 restful2.py
+```
