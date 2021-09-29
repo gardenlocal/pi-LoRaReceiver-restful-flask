@@ -25,3 +25,8 @@ $ sudo pip3 install adafruit-circuitpython-rfm9x
 ```
 $ python3 restful2.py
 ```
+
+## Testing 
+```
+$ @GET: IP_ADDRESS_:3005/weather
+```
