@@ -83,7 +83,6 @@ def get_packet():
 			display.text('Weather Receiver', 0, 0, 1)
 			display.text('> ' + str(temp_val)+ "C / "+str(humid_val)+"%", 0, 10, 1);
 			display.text("> " + timestamp_str, 0, 20, 1);
-			display.show()
 			time.sleep(1)
 		display.show()
 		
