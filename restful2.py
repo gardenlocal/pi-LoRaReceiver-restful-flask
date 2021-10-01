@@ -59,26 +59,23 @@ def get_packet():
 		#check for packet rx
 		packet = rfm9x.receive()
 		if packet is None :
-			display.fill(0)
-			display.show()
+#			display.fill(0)
+#			display.show()
 #			display.text('- Waiting for PKT -', 10, 20, 1)
 			time.sleep(1);
 		else:
 			prev_packet = packet
 			print('> New Packet!')
-	
+
 			#Decode packet
 			temp_val = pkt_int_to_float(packet[1], packet[2])
 			humid_val = pkt_int_to_float(packet[3], packet[4])
-
 			# timestamp
 			now = datetime.datetime.now()	# current date and time
 			timestamp_str = now.strftime("%Y/%m/%d")+"-"+now.strftime("%H:%M:%S")		
-
 			#print packet information
 			print("Temp  : %0.2f C" % temp_val)
 			print("Humid : %0.2f %% " % humid_val)
-
 			display.fill(0)
 			display.text('Weather Receiver', 0, 0, 1)
 			display.text('> ' + str(temp_val)+ "C / "+str(humid_val)+"%", 0, 10, 1);
