@@ -75,7 +75,10 @@ def get_packet():
 			#Decode packet
 			temp_val = pkt_int_to_float(packet[1], packet[2])
 			humid_val = pkt_int_to_float(packet[3], packet[4])
-			is_charging = False
+			if packet[5] is 1 :
+				is_charging = True
+			else :
+				is_charging = False
 
 			# timestamp
 			now = datetime.datetime.now()	# current date and time
