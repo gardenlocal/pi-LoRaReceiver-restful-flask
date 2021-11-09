@@ -89,7 +89,7 @@ def get_packet():
 
 			# timestamp
 			now = datetime.datetime.now()	# current date and time
-			timestamp_str = now.strftime("%Y/%m/%d")+"-"+now.strftime("%H:%M:%S")		
+			timestamp_str = now.strftime("%Y/%m/%d")+" "+now.strftime("%H:%M:%S")
 			#print packet information
 			print("Temp    : %0.2f C" % temp_val)
 			print("Humid   : %0.2f %% " % humid_val)
