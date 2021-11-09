@@ -9,12 +9,14 @@ import adafruit_ssd1306
 # Import the RFM9x radio module.
 import adafruit_rfm9x
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 #from multiprocessing import Process, Value
 from threading import Thread
 import datetime
 
 # Flask init
 app = Flask(__name__)
+CORS(app)
 
 #pid = "/tmp/restful.pid"
 
