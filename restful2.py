@@ -54,15 +54,20 @@ def get_packet():
 	global humid_val
 	global timestamp_str
 	global is_charging
+	global rssi
 
 	while True:
 		packet = None
 	
-		display.fill(0)
-		display.text('Weather Receiver', 0, 0, 1)
-	
 		#check for packet rx
 		packet = rfm9x.receive()
+		rssi = rfm9x.last_rssi
+
+		display.fill(0)
+		display.text("DWC2 WEATHER", 0, 0, 1)
+		display.text("> packet wating ... ", 0, 20, 1);
+
+
 		if packet is None :
 #			display.fill(0)
 #			display.show()
@@ -70,7 +75,7 @@ def get_packet():
 			time.sleep(1);
 		else:
 			prev_packet = packet
-			print('> New Packet!')
+#			print('> New Packet!')
 
 			#Decode packet
 			temp_val = pkt_int_to_float(packet[1], packet[2])
@@ -86,13 +91,14 @@ def get_packet():
 			#print packet information
 			print("Temp    : %0.2f C" % temp_val)
 			print("Humid   : %0.2f %% " % humid_val)
-			print("charge  : %r" % is_charging) 
-			print("updated :" + timestamp_str)
+			print("charge  : %r" % is_charging)
+			print("RSSI    : %d" % rssi)
+			print("updated : " + timestamp_str)
 			display.fill(0)
-			display.text('Weather Receiver', 0, 0, 1)
+			display.text("DWC2 WEATHER     " + str(rssi), 0, 0, 1)
 			
 			if is_charging is True: 
-				display.text('> ' + str(temp_val)+ "C / " + str(humid_val) + "%" + " / CHG", 0, 10, 1);
+				display.text('> ' + str(temp_val)+ "C / " + str(humid_val) + "%" + " + CHG", 0, 10, 1);
 			else:
 				display.text('> ' + str(temp_val)+ "C / " + str(humid_val) + "%", 0, 10, 1);
 			
@@ -109,11 +115,7 @@ def index():
 
 @app.route("/weather", methods = ['GET'])
 def return_weather_info():
-	return jsonify({"temperature" : temp_val, "humidity" : humid_val, "timestamp" : timestamp_str})
-
-@app.route("/battery", methods = ['GET'])
-def return_batt_info():
-	return jsonify({"charging" : is_charging, "timestamp" : timestamp_str}) 
+	return jsonify({"temperature" : temp_val, "humidity" : humid_val, "timestamp" : timestamp_str, "charging" : is_charging, "rssi" : rssi})
 
 def main():
 #	loop_on = Value('b', True)
