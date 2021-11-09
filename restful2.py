@@ -12,7 +12,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 #from multiprocessing import Process, Value
 from threading import Thread
-import datetime
+from datetime import datetime, timezone
 
 # Flask init
 app = Flask(__name__)
@@ -88,8 +88,11 @@ def get_packet():
 				is_charging = False
 
 			# timestamp
-			now = datetime.datetime.now()	# current date and time
-			timestamp_str = now.strftime("%Y/%m/%d")+" "+now.strftime("%H:%M:%S")
+#			now = datetime.datetime.now()	# current date and time
+#			now = datetime.datetime.utcnow()
+#			timestamp_str = now.strftime("%Y/%m/%d")+" "+now.strftime("%H:%M:%S")	// custom string format
+			timestamp_str = datetime.now(timezone.utc).isoformat()[:-6]+'Z'
+
 			#print packet information
 			print("Temp    : %0.2f C" % temp_val)
 			print("Humid   : %0.2f %% " % humid_val)
