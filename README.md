@@ -19,6 +19,8 @@ $ sudo apt-get install python3-sysv-ipc
 $ sudo pip3 install adafruit-circuitpython-ssd1306
 $ sudo pip3 install adafruit-circuitpython-framebuf
 $ sudo pip3 install adafruit-circuitpython-rfm9x
+$ pip3 install -U Flask
+$ pip3 install -U flask-cors
 ```
 
 ## Running
