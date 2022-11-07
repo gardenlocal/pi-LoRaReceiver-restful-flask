@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import requests
 from daemonize import Daemonize
 import time
 import busio
@@ -11,7 +12,7 @@ import adafruit_rfm9x
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 #from multiprocessing import Process, Value
-from threading import Thread
+from threading import Thread, Timer
 from datetime import datetime, timezone, timedelta
 import json
 
@@ -36,13 +37,12 @@ class float32_type(Union):
 class uint16_type(Union):
 	_fields_ = ("data", c_uint16), ("chunk", lbyte_array)
 
-number_of_devices = 3
+number_of_devices = 2
 devices = []
 
 # class of sensorData
 class weather_station:
-	def __init__(self, id):
-		self.device_id = id+1
+	def __init__(self):
 		self.temperature = 0
 		self.humidity = 0
 		self.soil = 9
@@ -50,8 +50,7 @@ class weather_station:
 		self.charging = 0
 		self.rssi = 0
 
-	def update(self, id, temperature, humidity, soil, timestamp, charging, rssi):
-		self.device_id = id+1
+	def update(self, temperature, humidity, soil, timestamp, charging, rssi):
 		self.temperature = temperature
 		self.humidity = humidity
 		self.soil = soil
@@ -109,13 +108,12 @@ def get_packet():
 		display.text("DWC2 WEATHER", 0, 0, 1)
 		display.text("> packet wating ... ", 0, 20, 1);
 
-
 		if packet is None :
 #			display.fill(0)
 #			display.show()
 #			display.text('- Waiting for PKT -', 10, 20, 1)
 			time.sleep(1);
-		else:
+		elif len(packet) is 15 :
 			prev_packet = packet
 #			print('> New Packet!')
 
@@ -141,10 +139,12 @@ def get_packet():
 			# timestamp
 			timestamp_str = datetime.now(timezone.utc).isoformat()[:-6]+'Z'
 
-			devices[device_id].update(temp_val, humid_val, soil_val, timestamp_str, is_charging, rssi)
+			devices[device_id-1].update(temp_val, humid_val, soil_val, timestamp_str, is_charging, rssi)
 
 			#print packet information
 			print("===============================================")
+			print('received packet size is : %d' % len(packet));
+	
 			print("DEVICE  : %d" % device_id)
 			print("Temp    : %0.2f C" % temp_val)
 			print("Humid   : %0.2f %% " % humid_val)
@@ -162,22 +162,37 @@ def get_packet():
 			
 			display.text("> " + timestamp_str, 0, 20, 1);
 			time.sleep(1)
+		else :
+			print("packet is not enough. bypassing....");
 		display.show()
 		
-def report_weather(id):
-	print("=weather report=================")
-	headers = {'content-type' : 'application/json'}
-	pushData = {
-		'co2' : 0,
-		'deviceId' : devices[id].device_id,
-		'temperature' : devices[id].temperature,
-		'humidity' : devices[id].humidity,
-		'deviceId' : devices[id].device_id,
-		'timestamp' : devices[id].timestamp,
-		'charging' : devices[id].charging,
-		'rssi' : devices[id].rssi
-	}
-	res = request.post('https://garden-local-dev.hoonyland.workers.dev/weather', headers = headers, data=json.dumps(pushData));
+def report_weather():
+	for i in range(number_of_devices):
+		t_id = i+1
+		print("=weather report=======================================" )
+		print("DEVICE ID : %d" % t_id)
+		print("Temp      : %0.2f C" % devices[i].temperature)
+		print("Humid     : %0.2f %% " % devices[i].humidity)
+		print("Soil	     : %d" % devices[i].soil)
+		print("charge    : %r" % devices[i].charging)
+		print("RSSI      : %d" % devices[i].rssi)
+
+		headers = {'content-type' : 'application/json'}
+		pushData = {
+			'device_id' : t_id,
+			'temperature' : devices[i].temperature,
+			'humidity' : devices[i].humidity,
+			'timestamp' : devices[i].timestamp,
+			'co2' : devices[i].soil,
+			'charging' : devices[i].charging,
+			'rssi' : devices[i].rssi
+		}
+		res = requests.post('https://garden-local-dev.hoonyland.workers.dev/weather', headers = headers, data=json.dumps(pushData));
+		print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE")
+		print(res.content)
+
+	t = Timer(15, report_weather)
+	t.start()
 
 # Flask routes
 @app.route("/")
@@ -189,28 +204,18 @@ def return_weather_info():
 	return jsonify({"temperature" : temp_val, "humidity" : humid_val, "timestamp" : timestamp_str, "charging" : is_charging, "rssi" : rssi})
 
 def main():
-	next_time = datetime.now();
-	delta = timedelta(seconds = 60);
-
+	# append list of weatherStation
 	for i in range(number_of_devices):
-		devices.append(weather_station(i+1))
+		devices.append(weather_station())
 
-	while True:
-		period = datetime.now()
-
-		if period >= next_time:
-			for i in range(number_of_devices):
-	#report_weather(devices[i])
-
+#	threading.Timer(15, report_weather, args =()).start();
+	report_weather()
 
 	p = Thread(target=get_packet, args=( ))
 	p.start()
 	app.run(host='0.0.0.0', debug=True, use_reloader=False, port=3005)
 	p.join()
 
-	q = Thread(target=report_weather, args=( ))
-	q.start()
-	q.join()
 
 if __name__ == "__main__":
 	main()
