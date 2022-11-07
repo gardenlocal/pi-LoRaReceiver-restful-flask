@@ -41,8 +41,8 @@ devices = []
 
 # class of sensorData
 class weather_station:
-	def __init__(self, device_id):
-		self.device_id= device_id
+	def __init__(self, id):
+		self.device_id = id+1
 		self.temperature = 0
 		self.humidity = 0
 		self.soil = 9
@@ -50,7 +50,8 @@ class weather_station:
 		self.charging = 0
 		self.rssi = 0
 
-	def update(self, temperature, humidity, soil, timestamp, charging, rssi):
+	def update(self, id, temperature, humidity, soil, timestamp, charging, rssi):
+		self.device_id = id+1
 		self.temperature = temperature
 		self.humidity = humidity
 		self.soil = soil
@@ -163,17 +164,18 @@ def get_packet():
 			time.sleep(1)
 		display.show()
 		
-def report_weather(device_id):
+def report_weather(id):
 	print("=weather report=================")
 	headers = {'content-type' : 'application/json'}
 	pushData = {
 		'co2' : 0,
-		'temperature' : devices[device_id].temp_val,
-		'humidity' : devices[device_id].humid_val,
-		'deviceId' : devices[device_id].device_id,
-		'timestamp' : devices[device_id].timestamp_str,
-		'charging' : devices[device_id].is_charging,
-		'rssi' : devices[device_id].rssi
+		'deviceId' : devices[id].device_id,
+		'temperature' : devices[id].temperature,
+		'humidity' : devices[id].humidity,
+		'deviceId' : devices[id].device_id,
+		'timestamp' : devices[id].timestamp,
+		'charging' : devices[id].charging,
+		'rssi' : devices[id].rssi
 	}
 	res = request.post('https://garden-local-dev.hoonyland.workers.dev/weather', headers = headers, data=json.dumps(pushData));
 
@@ -191,14 +193,14 @@ def main():
 	delta = timedelta(seconds = 60);
 
 	for i in range(number_of_devices):
-		devices.append(weather_station(i))
+		devices.append(weather_station(i+1))
 
 	while True:
 		period = datetime.now()
 
 		if period >= next_time:
-			for i in range(number_of_devices)
-				report_weather(devices[devide_id])
+			for i in range(number_of_devices):
+	#report_weather(devices[i])
 
 
 	p = Thread(target=get_packet, args=( ))
