@@ -117,51 +117,52 @@ def get_packet():
 			prev_packet = packet
 #			print('> New Packet!')
 
-			#Decode packet
-			device_id = (packet[2])
-			t_temp_val = float32_type()
-			t_humid_val = float32_type()
-			t_soil_val = uint16_type()
+			if packet[1] is 'R':
+				#Decode packet
+				device_id = (packet[2])
+				t_temp_val = float32_type()
+				t_humid_val = float32_type()
+				t_soil_val = uint16_type()
 
-			t_temp_val.chunk[:] = (packet[3], packet[4], packet[5], packet[6])
-			t_humid_val.chunk[:] = (packet[7], packet[8], packet[9], packet[10])
-			t_soil_val.chunk[:] = (packet[11], packet[12])
+				t_temp_val.chunk[:] = (packet[3], packet[4], packet[5], packet[6])
+				t_humid_val.chunk[:] = (packet[7], packet[8], packet[9], packet[10])
+				t_soil_val.chunk[:] = (packet[11], packet[12])
 
-			temp_val = t_temp_val.data
-			humid_val = t_humid_val.data
-			soil_val = t_soil_val.data
+				temp_val = t_temp_val.data
+				humid_val = t_humid_val.data
+				soil_val = t_soil_val.data
 
-			if packet[13] is 1 :
-				is_charging = True
-			else :
-				is_charging = False
+				if packet[13] is 1 :
+					is_charging = True
+				else :
+					is_charging = False
 
-			# timestamp
-			timestamp_str = datetime.now(timezone.utc).isoformat()[:-6]+'Z'
+				# timestamp
+				timestamp_str = datetime.now(timezone.utc).isoformat()[:-6]+'Z'
 
-			devices[device_id-1].update(temp_val, humid_val, soil_val, timestamp_str, is_charging, rssi)
+				devices[device_id-1].update(temp_val, humid_val, soil_val, timestamp_str, is_charging, rssi)
 
-			#print packet information
-			print("===============================================")
-			print('received packet size is : %d' % len(packet));
-	
-			print("DEVICE  : %d" % device_id)
-			print("Temp    : %0.2f C" % temp_val)
-			print("Humid   : %0.2f %% " % humid_val)
-			print("Soil	   : %d" % soil_val)
-			print("charge  : %r" % is_charging)
-			print("RSSI    : %d" % rssi)
-			print("updated : " + timestamp_str)
-			display.fill(0)
-			display.text("DWC2 WEATHER     " + str(rssi), 0, 0, 1)
-			
-			if is_charging is True: 
-				display.text('> ' + str(temp_val)+ "C / " + str(humid_val) + "%" + " + CHG", 0, 10, 1);
-			else:
-				display.text('> ' + str(temp_val)+ "C / " + str(humid_val) + "%", 0, 10, 1);
-			
-			display.text("> " + timestamp_str, 0, 20, 1);
-			time.sleep(1)
+				#print packet information
+				print("===============================================")
+				print('received packet size is : %d' % len(packet));
+		
+				print("DEVICE  : %d" % device_id)
+				print("Temp    : %0.2f C" % temp_val)
+				print("Humid   : %0.2f %% " % humid_val)
+				print("Soil	   : %d" % soil_val)
+				print("charge  : %r" % is_charging)
+				print("RSSI    : %d" % rssi)
+				print("updated : " + timestamp_str)
+				display.fill(0)
+				display.text("DWC2 WEATHER     " + str(rssi), 0, 0, 1)
+				
+				if is_charging is True: 
+					display.text('> ' + str(temp_val)+ "C / " + str(humid_val) + "%" + " + CHG", 0, 10, 1);
+				else:
+					display.text('> ' + str(temp_val)+ "C / " + str(humid_val) + "%", 0, 10, 1);
+				
+				display.text("> " + timestamp_str, 0, 20, 1);
+				time.sleep(1)
 		else :
 			print("packet is not enough. bypassing....");
 		display.show()
