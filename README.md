@@ -1,4 +1,7 @@
 # LoRa packet receiver & restful api
+1. read weather/environment information from stations through RFM9x LoRa
+2. report to cloud server
+3. get fog machine command from cloud server (need to implement.)
 
 ## requirement 
 - circuit Python이 업데이트됐는지, 새로 셋업시 3.6에서 동작안함. 3.7.0으로 업데이트해야함
@@ -28,9 +31,13 @@ $ pip3 install -U flask-cors
 
 ## Running
 ```
-$ python3 restful2.py
+$ python3 report2Server.py
 ```
 
+## Editding 
+edit `number_of_devices`, depends on weather station number
+```
+```
 ## Testing 
 ```
 $ @GET: IP_ADDRESS_:3005/weather
