@@ -37,7 +37,7 @@ class float32_type(Union):
 class uint16_type(Union):
 	_fields_ = ("data", c_uint16), ("chunk", lbyte_array)
 
-number_of_devices = 2
+number_of_devices = 3
 devices = []
 
 # class of sensorData
@@ -114,10 +114,12 @@ def get_packet():
 #			display.text('- Waiting for PKT -', 10, 20, 1)
 			time.sleep(1);
 		elif len(packet) is 15 :
+			print(packet[1])
 			prev_packet = packet
 #			print('> New Packet!')
 
-			if packet[1] is 'R':
+			if chr(packet[1]) is 'R':
+				print("RADIO PACKET READ ::: ")
 				#Decode packet
 				device_id = (packet[2])
 				t_temp_val = float32_type()
