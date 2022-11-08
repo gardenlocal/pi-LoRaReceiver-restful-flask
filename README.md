@@ -1,7 +1,8 @@
 # LoRa packet receiver & restful api
 
 ## requirement 
-circuit Python이 업데이트됐는지, 새로 셋업시 3.6에서 동작안함. 3.7.0으로 업데이트해야함
+- circuit Python이 업데이트됐는지, 새로 셋업시 3.6에서 동작안함. 3.7.0으로 업데이트해야함
+- 이전 정상 작동 디바이스의 경우 기존대로 3.5.0 사용가능
 
 ### python 3.7.0
 ```
