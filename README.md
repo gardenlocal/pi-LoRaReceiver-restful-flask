@@ -1,4 +1,5 @@
 # LoRa packet receiver & restful api
+-> [related repo](https://github.com/gardenlocal/feather-weatherReportLoRa)
 1. read weather/environment information from stations through RFM9x LoRa
 2. report to cloud server
 3. get fog machine command from cloud server (need to implement.)
@@ -35,7 +36,7 @@ $ python3 report2Server.py
 ```
 
 ## Editding 
-edit `number_of_devices`, depends on weather station number
+edit `number_of_devices` [here](https://github.com/gardenlocal/pi-LoRaReceiver-restful-flask/blob/4e1f8578ff4c174b044cdaa9ba1ab422f90da5b6/report2Server.py#L40), depends on weather station number
 ```
 ```
 ## Testing 
