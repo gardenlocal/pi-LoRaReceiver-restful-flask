@@ -186,7 +186,7 @@ def report_weather():
 			'temperature' : devices[i].temperature,
 			'humidity' : devices[i].humidity,
 			'timestamp' : devices[i].timestamp,
-			'co2' : devices[i].soil,
+			'soil' : devices[i].soil,
 			'charging' : devices[i].charging,
 			'rssi' : devices[i].rssi
 		}
@@ -194,7 +194,7 @@ def report_weather():
 		print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE")
 		print(res.content)
 
-	t = Timer(15, report_weather)
+	t = Timer(120, report_weather)
 	t.start()
 
 # Flask routes
