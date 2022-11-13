@@ -251,7 +251,7 @@ def set_spray():
 
 @app.route("/mode", methods = ['GET'])
 def get_mode():
-spreturn_interval_info = []
+	return_interval_info = []
 	for i in range(number_of_devices):
 		obj = {}
 		obj["mode"] = mode_[i]
@@ -281,7 +281,9 @@ def set_running():
 
 # send LoRa message (all bytes)
 def sendMessage(id, flag, message):
-	rfm9x.send(bytes("/{}{}{}".format(id, flag, message), "UTF-8"))
+	packets = bytes("/{}{}{}".format(id, flag, message), "UTF-8")
+	print(packets)
+	rfm9x.send(bytes(packets)
 
 def main():
 	# append list of weatherStation
