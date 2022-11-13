@@ -84,13 +84,15 @@ rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, RADIO_FREQ_MHZ)
 prev_packet = None
 
 #global variable
-mode = 0	# 0: auto, 1:manual
-spray = 5	# default : 5seconds in interval
-interval = 60	# default : spray every 60 min 
+mode = 0		# default mode / 0: auto, 1: manual
+spray = 5		# default spray for seconds : 5seconds in interval
+interval = 60	# default spray interval in minutes : spray every 60 min 
+running = 0		# default run in manual mode / 0: stop, 1: run
 
-mode_ = []							# running mode_devices
-spray_ = []				# spray_devices
-interval_ = []		# spray_interval_mins_devices
+mode_ = []		# running mode_devices
+spray_ = []		# spray_devices
+interval_ = []	# spray_interval_mins_devices
+running_ = []	# running_devices
 
 def send_packet():
 	rfm9x.send('/W');
@@ -260,7 +262,20 @@ def set_mode():
 	mode_[obj['id']] = obj['mode']
 	return jsonify(data=obj)
 
+@app.route("/run", methods = ['GET'])
+def get_running():
+	return_running_info = []
+	for i in range(number_of_devices):
+		obj = {}
+		obj["running"] = running_[i]
+		return_running_info.append(obj)
+	return jsonify(return_running_info)
 
+@app.route("/run", methods = ['POST'])
+def set_running():
+	obj = request.get_json()
+	running_[obj['id']] = obj['run']
+	return jsonify(data=obj)
 
 def main():
 	# append list of weatherStation
@@ -269,6 +284,7 @@ def main():
 		spray_.append(spray)
 		interval_.append(interval)
 		mode_.append(mode)
+		running_.append(running)
 
 #	threading.Timer(15, report_weather, args =()).start();
 	report_weather()
