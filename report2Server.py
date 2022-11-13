@@ -94,8 +94,9 @@ spray_ = []		# spray_devices
 interval_ = []	# spray_interval_mins_devices
 running_ = []	# running_devices
 
-def send_packet():
-	rfm9x.send('/W');
+# send LoRa message (all bytes)
+def sendMessage(id, flag, message):
+	rfm9x.send(bytes("/{}{}{}".format(id, flag, message), "UTF-8"))
 
 def get_packet():
 	# global temp_val
@@ -233,8 +234,8 @@ def set_interval():
 	return jsonify(data=obj)
 
 @app.route("/spray", methods = ['GET'])
-def get_spray:
-	terval_info = []
+def get_spray():
+	return_interval_info = []
 	for i in range(number_of_devices):
 		obj = {}
 		obj["spray"] = spray_[i]
