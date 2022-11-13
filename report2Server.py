@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import requests
+import struct
 from daemonize import Daemonize
 import time
 import busio
@@ -84,19 +85,17 @@ rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, RADIO_FREQ_MHZ)
 prev_packet = None
 
 #global variable
-mode = 0		# default mode / 0: auto, 1: manual
+manual = 0		# default manualmode / 0: auto, 1: manual
 spray = 5		# default spray for seconds : 5seconds in interval
 interval = 60	# default spray interval in minutes : spray every 60 min 
 running = 0		# default run in manual mode / 0: stop, 1: run
+humid_mode = 1	# default run in humid_mode / 0: off, 1: on
 
-mode_ = []		# running mode_devices
+manual_ = []	# running mode_devices
 spray_ = []		# spray_devices
 interval_ = []	# spray_interval_mins_devices
 running_ = []	# running_devices
-
-# send LoRa message (all bytes)
-def sendMessage(id, flag, message):
-	rfm9x.send(bytes("/{}{}{}".format(id, flag, message), "UTF-8"))
+humid_mode_ =[] # humid_mode
 
 def get_packet():
 	# global temp_val
@@ -228,9 +227,9 @@ def get_interval():
 @app.route("/interval", methods = ['POST'])
 def set_interval():
 	obj = request.get_json()
-	interval_[obj['id']] = obj['interval']
+	interval_[obj['id']-1] = obj['interval']
 	# sendMessage to feather
-	sendMessage(obj['id'],'I',obj['interval']) 
+	sendMessage(obj['id'],ord('I'),obj['interval'])
 	return jsonify(data=obj)
 
 @app.route("/spray", methods = ['GET'])
@@ -245,23 +244,41 @@ def get_spray():
 @app.route("/spray", methods = ['POST'])
 def set_spray():
 	obj = request.get_json()
-	spray_[obj['id']] = obj['spray']
+	spray_[obj['id']-1] = obj['spray']
+	sendMessage(obj['id'],ord('S'),obj['spray'])
 	return jsonify(data=obj)
 
 
-@app.route("/mode", methods = ['GET'])
-def get_mode():
+@app.route("/manual", methods = ['GET'])
+def get_manual():
 	return_interval_info = []
 	for i in range(number_of_devices):
 		obj = {}
-		obj["mode"] = mode_[i]
+		obj["manual"] = manual_[i]
 		return_interval_info.append(obj)
 	return jsonify(return_interval_info)
 
-@app.route("/mode", methods = ['POST'])
-def set_mode():
+@app.route("/manual", methods = ['POST'])
+def set_manual():
 	obj = request.get_json()
-	mode_[obj['id']] = obj['mode']
+	manual_[obj['id']-1] = obj['manual']
+	sendMessage(obj['id'],ord('M'), obj['manual'])
+	return jsonify(data=obj)
+
+@app.route("/humidMode", methods = ['GET'])
+def get_humidMode():
+	return_humid_mode_info = []
+	for i in range(number_of_devices):
+		obj = {}
+		obj["humidMode"] = humid_mode_[i]
+		return_humid_mode_info.append(obj)
+	return jsonify(return_humid_mode_info)
+
+@app.route("/humidMode", methods = ['POST'])
+def set_humidMode():
+	obj = request.get_json()
+	humid_mode_[obj['id']-1] = obj['humidMode']
+	sendMessage(obj['id'],ord('H'), obj['humidMode'])
 	return jsonify(data=obj)
 
 @app.route("/run", methods = ['GET'])
@@ -276,14 +293,15 @@ def get_running():
 @app.route("/run", methods = ['POST'])
 def set_running():
 	obj = request.get_json()
-	running_[obj['id']] = obj['run']
+	running_[obj['id']-1] = obj['run']
+	sendMessage(obj['id'],ord('R'), obj['run'])
 	return jsonify(data=obj)
 
-# send LoRa message (all bytes)
+# send LoRa message 
 def sendMessage(id, flag, message):
-	packets = bytes("/{}{}{}".format(id, flag, message), "UTF-8")
+	packets = bytes([ord('/'), id, flag, message])
 	print(packets)
-	rfm9x.send(bytes(packets)
+	rfm9x.send(packets)
 
 def main():
 	# append list of weatherStation
@@ -291,8 +309,9 @@ def main():
 		devices.append(weather_station())
 		spray_.append(spray)
 		interval_.append(interval)
-		mode_.append(mode)
+		manual_.append(manual)
 		running_.append(running)
+		humid_mode_.append(humid_mode)
 
 #	threading.Timer(15, report_weather, args =()).start();
 	report_weather()
