@@ -34,12 +34,11 @@ $ pip3 install -U flask-cors
 ```
 $ python3 report2Server.py
 ```
-### demonize with pm2
+## demonize with pm2
 - install pm2
 ```
 sudo npm install -g pm2
 ```
-- demonize
 -  move to repo location and 
 ```
 $ pm2 start report2Server.json
