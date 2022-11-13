@@ -45,7 +45,7 @@ $ pm2 start report2Server.json
 $ pm2 save
 ```
 
-## auto open tmux, log viewer
+## auto open tmux
 - if system not using zsh, install it (also recommend to install [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh))
 ```
 $ sudo apt install zsh
@@ -56,13 +56,32 @@ $ chsh -s /usr/bin/zsh # change default shell to zsh (using zsh location above r
 
 - add to `~/.zshrc`, end of lines
 ```
-if [ $(tty)==/dev/tty1 ]; then                                                
-     tmux attach
+session_name="report2Server"
+
+# 1. First you check if a tmux session exists with a given name.
+tmux has-session -t=$session_name 2> /dev/null
+
+# 2. Create the session if it doesn't exists.
+if [[ $? -ne 0 ]]; then
+  TMUX='' tmux new-session -d -s "$session_name"
+fi
+
+# 3. Attach if outside of tmux, switch if you're in tmux.
+if [[ -z "$TMUX" ]]; then
+  tmux attach -t "$session_name"
+else
+  tmux switch-client -t "$session_name"
 fi
 ```
 - reload script `source ~/.zshrc`
 
-## before running, set `number of devices`
+## checking logs
+```
+$ pm2 logs
+```
+
+# before deploy...
+## set `number of devices`
 edit `number_of_devices` [here](https://github.com/gardenlocal/pi-LoRaReceiver-restful-flask/blob/4e1f8578ff4c174b044cdaa9ba1ab422f90da5b6/report2Server.py#L40), depends on weather station number
 ```
 ```
