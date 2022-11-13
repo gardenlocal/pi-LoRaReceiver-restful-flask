@@ -93,10 +93,12 @@ $ pm2 logs
 ```
 
 # before deploy...
-## set `number of devices`
+- set `number of devices`
 edit `number_of_devices` [here](https://github.com/gardenlocal/pi-LoRaReceiver-restful-flask/blob/4e1f8578ff4c174b044cdaa9ba1ab422f90da5b6/report2Server.py#L40), depends on weather station number
 ```
+number_of_devices = 3
 ```
+
 ## Testing 
 ```
 $ @GET: IP_ADDRESS_:3005/weather
