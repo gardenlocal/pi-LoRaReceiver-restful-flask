@@ -60,7 +60,7 @@ $ chsh -s /usr/bin/zsh # change default shell to zsh (using zsh location above r
 # try logout and login it works
 ```
 
-- add to `~/.zshrc`, end of lines
+### 3. add to `~/.zshrc`, end of lines
 ```
 session_name="report2Server"
 
@@ -80,6 +80,12 @@ else
 fi
 ```
 - reload script `source ~/.zshrc`
+
+### 4. detach tmux session before exit
+```
+# press <Ctrl + B> - d 
+$ exit # logout 
+```
 
 ## checking logs
 ```
