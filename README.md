@@ -45,8 +45,14 @@ $ pm2 start report2Server.json
 $ pm2 save
 ```
 
-## auto open tmux
-- if system not using zsh, install it (also recommend to install [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh))
+## autostart open tmux
+
+### 1. install tmux
+```
+$ sudo apt install tmux
+```
+
+### 2. if system not using zsh, install it (also recommend to install [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh))
 ```
 $ sudo apt install zsh
 $ which zsh # zsh location
