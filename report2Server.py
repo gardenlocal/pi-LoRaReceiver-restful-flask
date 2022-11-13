@@ -85,12 +85,12 @@ prev_packet = None
 
 #global variable
 mode = 0	# 0: auto, 1:manual
-spray_for_seconds = 5	# default : 5seconds in interval
-spray_interval_minutes = 60	# default : spray every 60 min 
+spray = 5	# default : 5seconds in interval
+interval = 60	# default : spray every 60 min 
 
 mode_ = []							# running mode_devices
-spray_for_seconds_ = []				# spray_for_seconds_devices
-spray_interval_minutes_ = []		# spray_interval_mins_devices
+spray_ = []				# spray_devices
+interval_ = []		# spray_interval_mins_devices
 
 def send_packet():
 	rfm9x.send('/W');
@@ -218,14 +218,14 @@ def get_interval():
 	return_interval_info = []
 	for i in range(number_of_devices):
 		obj = {}
-		obj["interval_minutes"] = spray_interval_minutes_[i]
+		obj["interval_minutes"] = interval_[i]
 		return_interval_info.append(obj)
 	return jsonify(return_interval_info)
 
 @app.route("/interval", methods = ['POST'])
 def set_interval():
 	obj = request.get_json()
-	spray_interval_minutes_[obj['id']] = obj['interval']
+	interval_[obj['id']] = obj['interval']
 	return jsonify(data=obj)
 
 
@@ -234,14 +234,14 @@ def get_spray():
 	return_interval_info = []
 	for i in range(number_of_devices):
 		obj = {}
-		obj["spray_for_seconds"] = spray_for_seconds_[i]
+		obj["spray"] = spray_[i]
 		return_interval_info.append(obj)
 	return jsonify(return_interval_info)
 
 @app.route("/spray", methods = ['POST'])
 def set_spray():
 	obj = request.get_json()
-	spray_for_seconds_[obj['id']] = obj['spray']
+	spray_[obj['id']] = obj['spray']
 	return jsonify(data=obj)
 
 
@@ -266,8 +266,8 @@ def main():
 	# append list of weatherStation
 	for i in range(number_of_devices):
 		devices.append(weather_station())
-		spray_for_seconds_.append(spray_for_seconds)
-		spray_interval_minutes_.append(spray_interval_minutes)
+		spray_.append(spray)
+		interval_.append(interval)
 		mode_.append(mode)
 
 #	threading.Timer(15, report_weather, args =()).start();
