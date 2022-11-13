@@ -47,23 +47,23 @@ $ pm2 save
 ```
 
 ## auto open tmux, log viewer
-- if system not using zsh
-- recommend to install (oh-my-zsh)[https://github.com/ohmyzsh/ohmyzsh]
+- if system not using zsh, install it (also recommend to install [oh-my-zsh](https://github.com/ohmyzsh/ohmyzsh))
 ```
 $ sudo apt install zsh
 $ which zsh # zsh location
 $ chsh -s /usr/bin/zsh # change default shell to zsh (using zsh location above result)
-# try logout and login
+# try logout and login it works
 ```
 
-- add to `~/.zshrc`
+- add to `~/.zshrc`, end of lines
 ```
 if [ $(tty)==/dev/tty1 ]; then                                                
      tmux attach
 fi
 ```
+- reload script `source ~/.zshrc`
 
-## Editding 
+## before running, set `number of devices`
 edit `number_of_devices` [here](https://github.com/gardenlocal/pi-LoRaReceiver-restful-flask/blob/4e1f8578ff4c174b044cdaa9ba1ab422f90da5b6/report2Server.py#L40), depends on weather station number
 ```
 ```
