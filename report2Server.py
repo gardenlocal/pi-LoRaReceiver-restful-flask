@@ -228,12 +228,13 @@ def get_interval():
 def set_interval():
 	obj = request.get_json()
 	interval_[obj['id']] = obj['interval']
+	# sendMessage to feather
+	sendMessage(obj['id'],'I',obj['interval']) 
 	return jsonify(data=obj)
 
-
 @app.route("/spray", methods = ['GET'])
-def get_spray():
-	return_interval_info = []
+def get_spray:
+	terval_info = []
 	for i in range(number_of_devices):
 		obj = {}
 		obj["spray"] = spray_[i]
@@ -249,7 +250,7 @@ def set_spray():
 
 @app.route("/mode", methods = ['GET'])
 def get_mode():
-	return_interval_info = []
+spreturn_interval_info = []
 	for i in range(number_of_devices):
 		obj = {}
 		obj["mode"] = mode_[i]
@@ -276,6 +277,10 @@ def set_running():
 	obj = request.get_json()
 	running_[obj['id']] = obj['run']
 	return jsonify(data=obj)
+
+# send LoRa message (all bytes)
+def sendMessage(id, flag, message):
+	rfm9x.send(bytes("/{}{}{}".format(id, flag, message), "UTF-8"))
 
 def main():
 	# append list of weatherStation
