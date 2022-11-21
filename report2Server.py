@@ -38,7 +38,7 @@ class float32_type(Union):
 class uint16_type(Union):
 	_fields_ = ("data", c_uint16), ("chunk", lbyte_array)
 
-number_of_devices = 3
+number_of_devices = 2
 devices = []
 
 # class of sensorData
@@ -199,7 +199,7 @@ def report_weather():
 			'charging' : devices[i].charging,
 			'rssi' : devices[i].rssi
 		}
-		res = requests.post('https://garden-local-dev.hoonyland.workers.dev/weather', headers = headers, data=json.dumps(pushData));
+		res = requests.post('http://192.168.0.102:3000/api/weather/latest', headers = headers, data=json.dumps(pushData));
 		print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE")
 		print(res.content)
 
